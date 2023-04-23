@@ -1,0 +1,89 @@
+.scoreBoard {
+  display: flex;
+  justify-content: center;
+  border: 2px solid #bcbcbc;
+  font-size: 14px;
+  color: #4a4a4a;
+}
+
+.displayDetails {
+  display: flex;
+  justify-content: center;
+}
+.detailWrapper {
+  display: flex;
+  width: 300px;
+  padding: 12px;
+  justify-content: space-between;
+}
+.liveStatus {
+  background: #dbdbdb;
+  border-radius: 3px;
+  padding: 5px;
+  font-size: 12px;
+}
+figure {
+  margin: 0;
+}
+
+.status {
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  display: inline-block;
+  border-radius: 30px;
+}
+.status.green {
+  background: #08ba08;
+  animation: blink 1s ease infinite;
+}
+.result {
+  background: #609d60;
+  color: white;
+  width: 150px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+.result.fault {
+  background: #b56161;
+}
+.result figcaption {
+  animation: blink 1s ease infinite;
+}
+
+.status.red {
+  background: rgb(163, 1, 1);
+}
+.column:not(:last-child) {
+  border-right: 1px solid #bcbcbc;
+}
+.column div {
+  padding: 10px;
+}
+.column div:first-child {
+  background: #e7e7e7;
+}
+.column div:not(:last-child) {
+  border-bottom: 1px solid #bcbcbc;
+}
+.pointCont {
+  background: #e7e7e7;
+  padding: 4px;
+  border-radius: 4px;
+  margin: 8px;
+  font-size: 12px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
