@@ -73,7 +73,7 @@ function App() {
   //get the event data and assign it to state to display in the score board
   const extractGameData = (events) => {
     console.log(events);
-    events.map((event) => {
+    const mapEvents = events.map((event) => {
       event.firstServeFault || event.result === "doubleFault"
         ? setIsFault(true)
         : setIsFault(false);
