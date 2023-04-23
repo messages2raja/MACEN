@@ -25,7 +25,7 @@ export default function ScoreBoard() {
             <div className="liveStatus">
               Live
               {isMatchStarted ? (
-                <span className="status green"></span>
+                <span data-testid="status" className="status green"></span>
               ) : (
                 <span className="status red"></span>
               )}
