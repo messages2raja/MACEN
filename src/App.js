@@ -19,6 +19,7 @@ function App() {
   const [currentFSF, setCurrentFSF] = useState(false);
   const [isFault, setIsFault] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [gameWinner, setGameWinner] = useState("");
   const [currentPoints, setCurrentPoints] = useState({
     period: 0,
     periodName: "",
@@ -80,6 +81,7 @@ function App() {
         setIsMatchStarted(true);
       }
       if (event.type === "matchEnded") {
+        setGameWinner(getWinner());
         setIsMatchEnded(true);
       }
       if (event.type === "periodStart") {
@@ -112,6 +114,28 @@ function App() {
         setCurrentAwayPeriodPoint(event.awayScore);
       }
     });
+  };
+  //get winner
+  const getWinner = (prevPoints) => {
+    const winner = prevPoints
+      .reduce((acc, point) => {
+        const result =
+          point.homePeriodPoint > point.awayPeriodPoint
+            ? "home"
+            : point.homePeriodPoint === point.awayPeriodPoint
+            ? "tie"
+            : "away";
+        acc.push(result);
+        return acc;
+      }, [])
+      .reduce((acc, team) => {
+        acc[team] = acc[team] ? acc[team] + 1 : 1;
+        return acc;
+      }, {});
+    const mostRepeated = Object.keys(winner).reduce((a, b) =>
+      winner[a] > winner[b] ? a : b
+    );
+    return mostRepeated;
   };
 
   return (
@@ -148,7 +172,8 @@ function App() {
           </div>
         )}
         {isMatchEnded && (
-          <div className="flexItem">
+          <div className="flexItem flexColumn">
+            <h2>And the winner is {gameWinner}</h2>
             <figure>
               <img src={gameOver} alt="Game Over" style={{ width: "260px" }} />
               <figcaption>Game Over</figcaption>
