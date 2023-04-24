@@ -79,7 +79,7 @@ function App() {
           setIsMatchStarted(true);
           break;
         case "matchEnded":
-          setGameWinner(getWinner());
+          setGameWinner(getWinner(prevSetPoints));
           setIsMatchEnded(true);
           break;
         case "periodStart":
