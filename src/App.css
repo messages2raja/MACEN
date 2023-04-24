@@ -19,3 +19,6 @@ h4 {
   align-items: center;
   color: green;
 }
+.gameLoading img {
+  width: 260px;
+}
