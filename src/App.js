@@ -3,7 +3,7 @@ import ScoreContext from "./context";
 import ScoreBoard from "./components/ScoreBoard/ScoreBoard";
 import gameLoading from "./assets/gameLoading.gif";
 import gameOver from "./assets/gameOver.gif";
-import { extractGameData } from "./Utils/gameUtils";
+import { openTennisWebSocket } from "./Utils/gameUtils";
 import "./App.css";
 function App() {
   //Declaring constants
@@ -34,54 +34,31 @@ function App() {
 
   //Open websocket to receive the game details and live score
   useEffect(() => {
-    const ws = new WebSocket(baseurl);
-
-    const apiCall = {
-      cmd: "start",
-      opts: {
-        speed: 60,
-      },
-    };
-
-    ws.onopen = (event) => {
-      ws.send(JSON.stringify(apiCall));
-    };
-
-    ws.onmessage = function (event) {
-      const json = JSON.parse(event.data);
-      try {
-        if ((json.event = "data")) {
-          if (json.events.length > 0) {
-            setGameEvents(json.events);
-            extractGameData(
-              json.events,
-              setIsMatchStarted,
-              setGameWinner,
-              prevSetPoints,
-              setIsMatchEnded,
-              currentPeriodName,
-              currentHomePoint,
-              currentAwayPoint,
-              currentHomePeriodPoint,
-              currentAwayPeriodPoint,
-              setCurrentPeriodName,
-              setPrevSetPoints,
-              setCurrentPoints,
-              currentPoints,
-              setCurrentHomePoint,
-              setCurrentAwayPoint,
-              setCurrentServer,
-              setCurrentFSF,
-              setCurrentResult,
-              setCurrentHomePeriodPoint,
-              setCurrentAwayPeriodPoint
-            );
-          }
-        }
-      } catch (err) {
-        setApiError(err);
-      }
-    };
+    openTennisWebSocket(
+      baseurl,
+      setIsMatchStarted,
+      setGameWinner,
+      prevSetPoints,
+      setIsMatchEnded,
+      currentPeriodName,
+      currentHomePoint,
+      currentAwayPoint,
+      currentHomePeriodPoint,
+      currentAwayPeriodPoint,
+      setCurrentPeriodName,
+      setPrevSetPoints,
+      setCurrentPoints,
+      currentPoints,
+      setCurrentHomePoint,
+      setCurrentAwayPoint,
+      setCurrentServer,
+      setCurrentFSF,
+      setCurrentResult,
+      setCurrentHomePeriodPoint,
+      setCurrentAwayPeriodPoint,
+      setGameEvents,
+      setApiError
+    );
   });
 
   return (

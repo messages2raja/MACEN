@@ -112,3 +112,78 @@ export const resetCurrentPointStates = (
   setCurrentHomePeriodPoint(0);
   setCurrentAwayPeriodPoint(0);
 };
+
+export const openTennisWebSocket = (
+  baseurl,
+  setIsMatchStarted,
+  setGameWinner,
+  prevSetPoints,
+  setIsMatchEnded,
+  currentPeriodName,
+  currentHomePoint,
+  currentAwayPoint,
+  currentHomePeriodPoint,
+  currentAwayPeriodPoint,
+  setCurrentPeriodName,
+  setPrevSetPoints,
+  setCurrentPoints,
+  currentPoints,
+  setCurrentHomePoint,
+  setCurrentAwayPoint,
+  setCurrentServer,
+  setCurrentFSF,
+  setCurrentResult,
+  setCurrentHomePeriodPoint,
+  setCurrentAwayPeriodPoint,
+  setGameEvents,
+  setApiError
+) => {
+  const ws = new WebSocket(baseurl);
+
+  const apiCall = {
+    cmd: "start",
+    opts: {
+      speed: 60,
+    },
+  };
+
+  ws.onopen = (event) => {
+    ws.send(JSON.stringify(apiCall));
+  };
+
+  ws.onmessage = function (event) {
+    const json = JSON.parse(event.data);
+    try {
+      if ((json.event = "data")) {
+        if (json.events.length > 0) {
+          setGameEvents(json.events);
+          extractGameData(
+            json.events,
+            setIsMatchStarted,
+            setGameWinner,
+            prevSetPoints,
+            setIsMatchEnded,
+            currentPeriodName,
+            currentHomePoint,
+            currentAwayPoint,
+            currentHomePeriodPoint,
+            currentAwayPeriodPoint,
+            setCurrentPeriodName,
+            setPrevSetPoints,
+            setCurrentPoints,
+            currentPoints,
+            setCurrentHomePoint,
+            setCurrentAwayPoint,
+            setCurrentServer,
+            setCurrentFSF,
+            setCurrentResult,
+            setCurrentHomePeriodPoint,
+            setCurrentAwayPeriodPoint
+          );
+        }
+      }
+    } catch (err) {
+      setApiError(err);
+    }
+  };
+};
