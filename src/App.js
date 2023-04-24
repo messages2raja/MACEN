@@ -28,7 +28,7 @@ function App() {
     homePeriodPoint: 0,
     awayPeriodPoint: 0,
   });
-  const [prevPoints, setPrevPoints] = useState([]);
+  const [prevSetPoints, setPrevSetPoints] = useState([]);
   const baseurl = "ws://localhost:8081/"; // Websocket Baseurl
 
   //Open websocket to receive the game details and live score
@@ -71,71 +71,75 @@ function App() {
   };
 
   //get the event data and assign it to state to display in the score board
-  const extractGameData = (events) => {
-    console.log(events);
-    const mapEvents = events.map((event) => {
-      event.firstServeFault || event.result === "doubleFault"
-        ? setIsFault(true)
-        : setIsFault(false);
-      if (event.type === "matchStarted") {
-        setIsMatchStarted(true);
-      }
-      if (event.type === "matchEnded") {
-        setGameWinner(getWinner());
-        setIsMatchEnded(true);
-      }
-      if (event.type === "periodStart") {
-        const addPrevPoints = {
-          periodName: currentPeriodName,
-          homepoint: currentHomePoint,
-          awaypoint: currentAwayPoint,
-          homePeriodPoint: currentHomePeriodPoint,
-          awayPeriodPoint: currentAwayPeriodPoint,
-        };
-        resetCurrentPointStates();
-        setCurrentPeriodName(event.periodName);
-        if (event.periodName !== "1stSet") {
-          setPrevPoints([...prevPoints, addPrevPoints]);
-        }
 
-        setCurrentPoints({ ...currentPoints, periodName: event.periodName });
+  const extractGameData = (events) => {
+    for (const event of events) {
+      switch (event.type) {
+        case "matchStarted":
+          setIsMatchStarted(true);
+          break;
+        case "matchEnded":
+          setGameWinner(getWinner());
+          setIsMatchEnded(true);
+          break;
+        case "periodStart":
+          const addPrevPoints = {
+            periodName: currentPeriodName,
+            homepoint: currentHomePoint,
+            awaypoint: currentAwayPoint,
+            homePeriodPoint: currentHomePeriodPoint,
+            awayPeriodPoint: currentAwayPeriodPoint,
+          };
+          resetCurrentPointStates();
+          setCurrentPeriodName(event.periodName);
+          if (event.periodName !== "1stSet") {
+            setPrevSetPoints([...prevSetPoints, addPrevPoints]);
+          }
+          setCurrentPoints({ ...currentPoints, periodName: event.periodName });
+          break;
+        case "point":
+          setCurrentHomePoint(event.homeScore);
+          setCurrentAwayPoint(event.awayScore);
+          setCurrentServer(event.server);
+          setCurrentFSF(event.firstServeFault || false);
+          setCurrentResult(event.result);
+          break;
+        case "periodScore":
+          setCurrentHomePeriodPoint(event.homeScore);
+          setCurrentAwayPeriodPoint(event.awayScore);
+          break;
+        default:
+          break;
       }
-      if (event.type === "point") {
-        setCurrentHomePoint(event.homeScore);
-        setCurrentAwayPoint(event.awayScore);
-        setCurrentServer(event.server);
-        event.firstServeFault
-          ? setCurrentFSF(event.firstServeFault)
-          : setCurrentFSF(false);
-        setCurrentResult(event.result);
-      }
-      if (event.type === "periodScore") {
-        setCurrentHomePeriodPoint(event.homeScore);
-        setCurrentAwayPeriodPoint(event.awayScore);
-      }
-    });
+    }
   };
+
   //get winner
+
   const getWinner = (prevPoints) => {
-    const winner = prevPoints
-      .reduce((acc, point) => {
-        const result =
-          point.homePeriodPoint > point.awayPeriodPoint
-            ? "home"
-            : point.homePeriodPoint === point.awayPeriodPoint
-            ? "tie"
-            : "away";
-        acc.push(result);
-        return acc;
-      }, [])
-      .reduce((acc, team) => {
-        acc[team] = acc[team] ? acc[team] + 1 : 1;
-        return acc;
-      }, {});
-    const mostRepeated = Object.keys(winner).reduce((a, b) =>
-      winner[a] > winner[b] ? a : b
-    );
-    return mostRepeated;
+    const wins = {};
+    let maxWins = 0;
+    let winner;
+
+    for (const point of prevPoints) {
+      const result =
+        point.homePeriodPoint > point.awayPeriodPoint
+          ? "home"
+          : point.homePeriodPoint === point.awayPeriodPoint
+          ? "tie"
+          : "away";
+      if (wins[result]) {
+        wins[result]++;
+      } else {
+        wins[result] = 1;
+      }
+      if (wins[result] > maxWins) {
+        maxWins = wins[result];
+        winner = result;
+      }
+    }
+
+    return winner;
   };
 
   return (
@@ -143,7 +147,7 @@ function App() {
       value={{
         isMatchStarted: isMatchStarted,
         currentServer: currentServer,
-        prevPoints: prevPoints,
+        prevSetPoints: prevSetPoints,
         currentPeriodName: currentPeriodName,
         currentHomePeriodPoint: currentHomePeriodPoint,
         currentAwayPeriodPoint: currentAwayPeriodPoint,

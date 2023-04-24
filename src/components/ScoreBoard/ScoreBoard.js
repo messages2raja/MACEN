@@ -7,7 +7,7 @@ import "../ScoreBoard/ScoreBoard.css";
 export default function ScoreBoard() {
   const {
     isMatchStarted,
-    prevPoints,
+    prevSetPoints,
     currentServer,
     currentPeriodName,
     currentHomePeriodPoint,
@@ -46,8 +46,8 @@ export default function ScoreBoard() {
                 <span>{currentServer === "away" ? <>&#127934;</> : ""}</span>
               </div>
             </div>
-            {prevPoints &&
-              prevPoints.map((prev) => (
+            {prevSetPoints &&
+              prevSetPoints.map((prev) => (
                 <ScoreColumn
                   periodName={prev.periodName}
                   homePeriodPoint={prev.homePeriodPoint}
