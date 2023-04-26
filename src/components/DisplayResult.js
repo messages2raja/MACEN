@@ -7,6 +7,16 @@ import ace from "../assets/Ace.gif";
 import { useContext } from "react";
 export default function DisplayResult() {
   const { currentResult, currentFSF } = useContext(ScoreContext);
+  const images = {
+    serverWon,
+    receiverWon,
+    doubleFault,
+    firstServeFault,
+  };
+
+  function getImageByKey(key) {
+    return images[key];
+  }
   return (
     <>
       {currentFSF ? (
@@ -20,32 +30,13 @@ export default function DisplayResult() {
         </figure>
       ) : (
         <figure>
-          {currentResult === "serverWon" && (
-            <img
-              src={serverWon}
-              alt={currentResult}
-              style={{ width: "100%" }}
-            />
-          )}
-          {currentResult === "receiverWon" && (
-            <img
-              src={receiverWon}
-              alt={currentResult}
-              style={{ width: "100%" }}
-            />
-          )}
-          {currentResult === "ace" && (
-            <img src={ace} alt={currentResult} style={{ width: "100%" }} />
-          )}
-          {currentResult === "doubleFault" && (
-            <img
-              src={doubleFault}
-              alt={currentResult}
-              style={{ width: "100%" }}
-            />
-          )}
+          <img
+            src={getImageByKey(currentResult)}
+            alt={currentResult}
+            style={{ width: "100%" }}
+          />
 
-          <figcaption> {currentResult}</figcaption>
+          <figcaption>{currentResult}</figcaption>
         </figure>
       )}
     </>

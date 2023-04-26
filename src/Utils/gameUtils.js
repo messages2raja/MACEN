@@ -21,7 +21,8 @@ export const extractGameData = (
   setCurrentFSF,
   setCurrentResult,
   setCurrentHomePeriodPoint,
-  setCurrentAwayPeriodPoint
+  setCurrentAwayPeriodPoint,
+  setIsFault
 ) => {
   for (const event of events) {
     switch (event.type) {
@@ -67,6 +68,10 @@ export const extractGameData = (
       default:
         break;
     }
+    (event.firstServeFault && event.firstServeFault) ||
+    (event.result && event.result === "doubleFault")
+      ? setIsFault(true)
+      : setIsFault(false);
   }
 };
 
@@ -136,7 +141,8 @@ export const openTennisWebSocket = (
   setCurrentHomePeriodPoint,
   setCurrentAwayPeriodPoint,
   setGameEvents,
-  setApiError
+  setApiError,
+  setIsFault
 ) => {
   const ws = new WebSocket(baseurl);
 
@@ -152,8 +158,8 @@ export const openTennisWebSocket = (
   };
 
   ws.onmessage = function (event) {
-    const json = JSON.parse(event.data);
     try {
+      const json = event && event.data && JSON.parse(event.data);
       if ((json.event = "data")) {
         if (json.events.length > 0) {
           setGameEvents(json.events);
@@ -178,12 +184,16 @@ export const openTennisWebSocket = (
             setCurrentFSF,
             setCurrentResult,
             setCurrentHomePeriodPoint,
-            setCurrentAwayPeriodPoint
+            setCurrentAwayPeriodPoint,
+            setIsFault
           );
         }
       }
     } catch (err) {
       setApiError(err);
     }
+  };
+  ws.onclose = (event) => {
+    console.log("The connection has been closed successfully.");
   };
 };

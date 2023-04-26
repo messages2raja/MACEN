@@ -57,7 +57,8 @@ function App() {
       setCurrentHomePeriodPoint,
       setCurrentAwayPeriodPoint,
       setGameEvents,
-      setApiError
+      setApiError,
+      setIsFault
     );
   });
 
@@ -93,8 +94,8 @@ function App() {
         {isMatchEnded && (
           <div className="flexItem flexColumn">
             <h2>And the winner is {gameWinner}</h2>
-            <figure>
-              <img src={gameOver} alt="Game Over" style={{ width: "260px" }} />
+            <figure className="gameLoading">
+              <img src={gameOver} alt="Game Over" />
               <figcaption>Game Over</figcaption>
             </figure>
           </div>
